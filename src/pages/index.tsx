@@ -1,12 +1,15 @@
-import { parseISO } from 'date-fns'
-import format from 'date-fns/format'
-import { ptBR } from 'date-fns/locale'
-import { GetServerSideProps } from 'next'
-import { api } from '../services/api'
-import { convertDurationToTimeString } from '../utils/convertDurationToTimeString'
-import styles from './home.module.scss'
+import { GetServerSideProps } from "next"
+
 import Image from 'next/image'
 import Link from 'next/link'
+
+import { api } from "../services/api"
+
+import { format, parseISO } from "date-fns"
+import ptBR from "date-fns/locale/pt-BR"
+import { convertDurationToTimeString } from "../utils/convertDurationToTimeString"
+
+import styles from './home.module.scss';
 
 type Episode = {
   id: string;
@@ -24,8 +27,8 @@ type HomeProps = {
   latestEpisodes: Episode[];
 }
 
+export default function Home({ latestEpisodes, allEpisodes }: HomeProps) {
 
-export default function Home({latestEpisodes, allEpisodes}: HomeProps) {
   return (
     <div className={styles.homepage}>
       <section className={styles.latestEpisodes}>
@@ -43,8 +46,8 @@ export default function Home({latestEpisodes, allEpisodes}: HomeProps) {
               />
 
               <div className={styles.episodeDetails}>
-                <Link href={`/episodes/${episode.id}`}>
-                  <a>{episode.title}</a>                  
+                <Link href={`/episodes/${episode.id}`} passHref>
+                  <a>{episode.title}</a>
                 </Link>
                 <p>{episode.members}</p>
                 <span>{episode.publishedAt}</span>
@@ -54,29 +57,27 @@ export default function Home({latestEpisodes, allEpisodes}: HomeProps) {
               <button type="button">
                 <img src="/play-green.svg" alt="Tocar episódio"/>
               </button>
-            </li>            
+            </li>
           ))}
         </ul>
       </section>
-
       <section className={styles.allEpisodes}>
         <h2>Todos episódios</h2>
         <table cellSpacing={0}>
-          <thead>
-            <tr>
-              <th></th>
-              <th>Podcast</th>
-              <th>Integrantes</th>
-              <th>Data</th>
-              <th>Duração</th>
-              <th></th>
-            </tr>
-          </thead>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Podcast</th>
+                <th>Integrantes</th>
+                <th>Duração</th>
+                <th></th>
+              </tr>
+            </thead>
 
-          <tbody>
-            {allEpisodes.map(episode => (
-              <tr key={episode.id}>
-                <td style={{ width: 72 }}>
+            <tbody>
+              {allEpisodes.map(episode => (
+                <tr key={episode.id}>
+                  <td style={{ width: 72 }}>
                     <Image 
                       width={120}
                       height={120}
@@ -85,27 +86,26 @@ export default function Home({latestEpisodes, allEpisodes}: HomeProps) {
                       objectFit="cover"
                     />
                   </td>
-
                   <td>
-                    <Link  href={`/episodes/${episode.id}`} passHref>
+                    <Link href={`/episodes/${episode.id}`} passHref>
                       <a href={`/episodes/${episode.id}`}>{episode.title}</a>
                     </Link>
                   </td>
                   <td>{episode.members}</td>
-                  <td style={{ width: 80 }} >{episode.publishedAt}</td>
+                  <td style={{ width: 100 }}>{episode.publishedAt}</td>
                   <td>{episode.durationAsString}</td>
                   <td>
                     <button type="button">
                       <img src="/play-green.svg" alt="Tocar episódio" />
                     </button>
                   </td>
-              </tr>
-            ))}
-          </tbody>
+                </tr>
+              ))}
+            </tbody>
         </table>
       </section>
     </div>
-  )   
+  )
 }
 
 export const getStaticProps: GetServerSideProps = async () => {
